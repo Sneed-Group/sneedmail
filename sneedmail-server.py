@@ -50,18 +50,6 @@ class EmlServer(SMTPServer):
         print('%s saved.' % filename)
         self.no += 1
 
-def EmlClientSend(sender, to, subject, msg, passwd):
-    mail_client = smtplib.SMTP('localhost',1025)
-    mail_client.ehlo()
-    mail_client.login(sender, crypter(passwd))
-    messg = MIMEMultipart()
-    messg['From'] = sender
-    messg['To'] = to
-    messg['Subject'] = subject
-    message = msg
-    messg.attach(crypter(MIMEText(message)))
-    mail_client.sendmail(sender, to, messg)
-
 def run_server():
     # start the smtp server on localhost:1025
     email_server = EmlServer(('localhost', 1025), None)
@@ -69,14 +57,6 @@ def run_server():
         asyncore.loop()
     except KeyboardInterrupt:
         pass
-
-def run_client():
-    while True:
-        sender = input("<Sender Address>: ")
-        password = crypter(input("<Sender Password>: "))
-        to = input("<To>: ")
-        subject = input("<Subject>: ")
-        msg = input("<Message>: ")
 
 if __name__ == '__main__':
     run()
