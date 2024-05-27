@@ -39,37 +39,6 @@ def crypter(message):
     new_message = ''.join(letter_list)
     return new_message
 
-class EmlServer(SMTPServer):
-    no = 0
-    def process_message(self, peer, mailfrom, rcpttos, data):
-        filename = '%s-%d.eml' % (datetime.now().strftime('%Y%m%d%H%M%S'),
-                self.no)
-        f = open(filename, 'w')
-        f.write(crypter(data))
-        f.close
-        print('%s saved.' % filename)
-        self.no += 1
-
-def EmlClientSend(sender, to, subject, msg, passwd, server, port):
-    mail_client = smtplib.SMTP(server, port)
-    mail_client.ehlo()
-    mail_client.login(sender, crypter(passwd))
-    messg = MIMEMultipart()
-    messg['From'] = sender
-    messg['To'] = to
-    messg['Subject'] = subject
-    message = msg
-    messg.attach(crypter(MIMEText(message)))
-    mail_client.sendmail(sender, to, messg)
-
-def run_server():
-    # start the smtp server on localhost:1025
-    email_server = EmlServer(('localhost', 1025), None)
-    try:
-        asyncore.loop()
-    except KeyboardInterrupt:
-        pass
-
 def run_client():
     while True:
         contents = input("<eMail Contents>: ")
